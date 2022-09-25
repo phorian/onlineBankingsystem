@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <windows.h>
+#include <time.h>
 
 /********************************************
  * Online banking system with these features
@@ -23,13 +25,15 @@ struct user{
 
 int main(){
     struct user usr,usr1;
-    int opt,choice;
+    int opt,choice,count;
     FILE *fp;
     char filename[50],phone[50],pword[50];
     char cont = 'y';
     float amount;
+    time_t now;
     
     printf("\n\t\t\t=================== WELCOME TO X-Nova ONLINE BANKING =================== ");
+    printf("\t\t\t\t\t    %s",ctime(&now));
     printf("\nWhat would you Like to do? ");
     printf("\n\n 1. Create an account");
     printf("\n2. Login ");
@@ -38,7 +42,6 @@ int main(){
 
     if(opt == 1){
         system("cls");
-      
         printf("\n\nEnter Your Full Name: \t");
         scanf("%s",usr.FullName);
         printf("\nEnter Your account Number: \t");
@@ -60,23 +63,24 @@ int main(){
         fclose(fp);
     }
 
-    if (opt == 2) {
+    if (opt == 2) 
+    {
         system("cls");
-        printf("\n\t\tX-NOVA BANK");
-        printf("\n\nPhone Number: ");
-        scanf("%s", &phone);
-        printf("\nPassword: ");
-        scanf("%s", &pword);
-        strcpy(filename,phone);
-        fp = fopen(strcat(filename,".dat"), "r");
-        if(fp == NULL){
+        printf("\n\t\tX-NOVA BANK"); 
+            printf("\n\nPhone Number: ");
+            scanf("%s", &phone);
+            printf("\nPassword: ");
+            scanf("%s", &pword);
+            strcpy(filename,phone);
+            fp = fopen(strcat(filename,".dat"), "r");
+            if(fp == NULL){
             printf("\nAccount does not exist");
-        }
-        else {
+             }
+            else {
             fread(&usr,sizeof(struct user),1,fp);
             fclose(fp);
             if(!strcmp(pword, usr.password)){
-                while (cont == 'y')
+                while (cont == 'y' || cont == 'Y')
                 {
                     system("cls");
                     printf("\n\t\tX-NOVA BANK");
@@ -112,6 +116,12 @@ int main(){
                         case 3:
                             printf("\nEnter the amount to withdraw: \t");
                             scanf("%f", &amount);
+                            if (usr.balance < amount)
+                            {
+                                printf("\n\n\t\t\t Insufficient Funds!!!");
+                                amount;
+                            }
+                            else {
                             usr.balance -= amount;
                             fp = fopen(filename, "w");
                             fwrite(&usr, sizeof(struct user),1,fp);
@@ -122,6 +132,7 @@ int main(){
                                 printf("\n\t\tThank you for banking with us");
                              }
                              fclose(fp);
+                            }
                         break;
                         case 4:
                             printf("Please Enter phone number to transfer into: \t");
@@ -179,21 +190,18 @@ int main(){
 
                     printf("\n\n\t\tDo you want to perform another transaction?...[y/n]: ");
                     scanf("%s", &cont);
+                    
 
                 }
             }
-             else 
-             {
+             else {
+                Beep(610,500);
                 printf("Invalid Password");
-                } 
-        }
-            
-                
-
-    }
-    
-
-
+                }
+             
+        
+            }
+        }       
 
     return 0;
 }
